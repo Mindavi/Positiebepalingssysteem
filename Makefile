@@ -1,5 +1,5 @@
 
-VERSION_ID=$(shell ./gen_version_id.py)
+VERSION_ID=$(shell git describe --long --tags --dirty)
 CXXFLAGS= -Wall -pedantic -std=c++11 -I. -Werror -Wextra -DEXT_VER=$(VERSION_ID)
 LDFLAGS= -lopencv_core
 BINARIES= position_from_camera 
