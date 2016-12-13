@@ -10,4 +10,4 @@ position_from_camera: position_from_camera.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LDFLAGS)
 
 clean:
-	@rm $(BINARIES) 
+	@rm -f $(BINARIES) 
