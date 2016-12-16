@@ -23,30 +23,31 @@ std::string help_text = "\t-u <url>: read from url\n" \
 	"\t-v: verbose mode\n" \
 	"\t-h: view this help text\n"
 	"\t-V: view version\n";
-	
+
+struct options options;
+
 sig_atomic_t run = true;
 void termination_signal(int)
 {
   run = false;
 }
 
-struct options get_and_set_options(int argc, char* argv[])
+void get_and_set_options(int argc, char* argv[])
 {
-  struct options opts;
   int c;
   while((c = getopt(argc, argv, "hu:c:ovV")) != -1) 
   {
   switch(c)
   {
     case 'u':
-      opts.use_url = true;
-      opts.url = optarg;
+      options.use_url = true;
+      options.url = optarg;
       break;
     case 'c':
-      opts.use_camera = true;
+      options.use_camera = true;
       try
       {
-         opts.camera_id = std::stoi(optarg);
+         options.camera_id = std::stoi(optarg);
       }
       catch (std::invalid_argument& e) 
       {
@@ -60,11 +61,11 @@ struct options get_and_set_options(int argc, char* argv[])
       }
       break;
     case 'o':
-      opts.view_camera = true;
+      options.view_camera = true;
       break;
     case 'v':
-      opts.verbose = true;
-      log("Verbose logging enabled", opts);
+      options.verbose = true;
+      log("Verbose logging enabled");
       break;
     case 'V':
       std::clog << version << std::endl;
@@ -83,17 +84,16 @@ struct options get_and_set_options(int argc, char* argv[])
       break;
     }
   }
-  if (opts.use_camera && opts.use_url)
+  if (options.use_camera && options.use_url)
   {
     std::cerr << "ERROR: You can only use camera or url, not both. Exiting..." << std::endl;
     exit(EXIT_FAILURE);
   }
-  if (!(opts.use_camera || opts.use_url))
+  if (!(options.use_camera || options.use_url))
   {
     std::cerr << "ERROR: Please select camera or url mode. Exiting..." << std::endl;
     exit(EXIT_FAILURE);
   }
-  return opts;
 }
 
 int get_largest_contour(const cv::Mat frame, std::vector<cv::Point>& largest_contour)
@@ -108,30 +108,30 @@ int main(int argc, char* argv[])
 {
   signal(SIGINT, termination_signal); 
   signal(SIGTERM, termination_signal);
-  struct options options = get_and_set_options(argc, argv);
+  get_and_set_options(argc, argv);
   cv::VideoCapture capture;
   if (options.use_camera)
   {
-    log("Using camera with id " + std::to_string(options.camera_id), options);
+    log("Using camera with id " + std::to_string(options.camera_id));
     capture.open(options.camera_id);
   }
   else if (options.use_url)
   {
-    log("Using url with link " + options.url, options);
+    log("Using url with link " + options.url);
     capture.open(options.url);
   }
   else
   {
     abort();
   }
-  log("Starting read loop...", options);
+  log("Starting read loop...");
   cv::Mat frame;
   while (run)
   {
     capture >> frame;
     if (frame.empty()) 
     {
-      log("Empty frame received", options);
+      log("Empty frame received");
       continue;
     }
     if (options.view_camera)
@@ -144,6 +144,6 @@ int main(int argc, char* argv[])
       }
     }
   }
-  log("Exiting...", options);
+  log("Exiting...");
   return EXIT_SUCCESS;
 }

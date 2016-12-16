@@ -12,8 +12,10 @@ struct options {
   bool verbose = 0;
 };
 
-void log(std::string text, struct options opts) {
-  if (opts.verbose)
+extern struct options options;
+
+void log(std::string text) {
+  if (options.verbose)
   {
     std::clog << text << std::endl;
   }
