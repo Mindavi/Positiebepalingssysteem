@@ -2,17 +2,7 @@
 #define HELPERS_H_
 
 #include <string>
-
-struct options {
-  bool use_url = 0;
-  std::string url;
-  bool use_camera = 0;
-  int camera_id = 0;
-  bool view_camera = 0;
-  bool verbose = 0;
-};
-
-extern struct options options;
+#include "options.h"
 
 void log(std::string text) {
   if (options.verbose)
@@ -21,4 +11,10 @@ void log(std::string text) {
   }
 }
 
+void view(const cv::Mat frame, std::string title) {
+  if (options.view_camera) {
+    cv::imshow(title, frame);
+    cv::waitKey(1); // should be done, to show the frame (might slow the program down a little though, but it's debug output anyway)
+  }
+}
 #endif

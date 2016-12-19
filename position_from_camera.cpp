@@ -7,6 +7,7 @@
 #include <csignal>
 #include <string>
 #include "helpers.h"
+#include "options.h"
 
 #define VERSION VERSION_STR(EXT_VER)
 #define VERSION_STR(X) _VERSION_STR(X)
