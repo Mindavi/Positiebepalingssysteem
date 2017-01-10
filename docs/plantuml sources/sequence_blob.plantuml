@@ -1,6 +1,29 @@
 @startuml
 
 actor person
+entity application
+entity PositionFromCapture as pos
+entity BackgroundSubtractor as bg
+entity BlobDetection as bd
+entity ImageProcessor as img
+entity Printer as print
 
+loop Retrieve positions and print them
+person -> application: moves
+application -> pos : getPositions
+pos -> bg : getForeground
+bg -> bg : retrieveFrame
+bg -> img : process(frame)
+img --> bg : processedFrame
+'FIXME syntax'
+bg --> pos : foreground image
+pos -> bd: detectBlobs(foreground_image)
+bd --> pos: array(detectedCoordinates)
+
+'FIXME syntax'
+pos --> application : array(x,y)
+application -> print : array(x,y)
+print --> application
+end
 
 @enduml
