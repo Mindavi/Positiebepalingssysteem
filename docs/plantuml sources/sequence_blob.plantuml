@@ -1,17 +1,53 @@
 @startuml
 
 actor person
+entity system
 entity application
+entity Printer as print
 entity PositionFromCapture as pos
 entity BackgroundSubtractor as bg
+entity VideoCapture as vc
 entity BlobDetection as bd
 entity ImageProcessor as img
-entity Printer as print
 
+system -> application : run
+'there are several system calls, e.g. to the camera, for printing data etc.
+note right of system : not all system calls are displayed for clarity`s sake
+
+== initialization sequence ==
+'when an object is created, activate after construction or before construction?'
+application -> vc : VideoCapture
+activate vc
+vc --> application : VideoCapture
+application -> pos : PositionFromCapture(capture)
+activate pos
+pos -> bg : BackgroundSubtractor(capture)
+activate bg
+bg -> img : ImageProcessor
+activate img
+img --> bg : ImageProcessor
+bg --> pos : BackgroundSubtractor
+pos -> bg : calibrate
+loop calibration
+note left of bg : calibration takes some time
+bg -> vc : getFrame
+vc --> bg : frame
+bg -> bg : update bgsubtractor
+end
+bg --> pos : true
+pos --> application : PositionFromCapture
+application -> print : Print
+activate print
+print --> application
+
+
+
+== main loop ==
 loop Retrieve positions and print them
 person -> application: moves
 application -> pos : getPositions
 pos -> bg : getForeground
+note left of bg : call videocapture somewhere here
 bg -> bg : retrieveFrame
 bg -> img : process(frame)
 img --> bg : processedFrame
@@ -22,8 +58,21 @@ bd --> pos: array(detectedCoordinates)
 
 'FIXME syntax'
 pos --> application : array(x,y)
-application -> print : array(x,y)
+application -> print : print(array(x,y))
 print --> application
+
 end
+
+system -> application : SIGTERM | SIGINT | SIGPIPE
+application -> application : clean up
+deactivate pos
+deactivate bg
+deactivate vc
+deactivate bd
+deactivate img
+deactivate print
+application -> application : terminate
+application --> system
+
 
 @enduml
