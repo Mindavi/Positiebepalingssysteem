@@ -1,0 +1,14 @@
+@startuml
+
+[WebcamReader] as wr
+[ImageProcessor] as ip
+[MathModule] as mm
+[Visualisation] as viz
+
+wr -0)- ip : JpgInterface
+ip -0)- mm : TextInterface
+mm -0)- viz : CoordinateInterface
+
+
+
+@enduml
