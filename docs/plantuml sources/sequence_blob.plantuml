@@ -94,7 +94,6 @@ deactivate vc
 deactivate bd
 deactivate img
 deactivate print
-application -> application : terminate
 application --> system
 deactivate application
 
