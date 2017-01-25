@@ -11,6 +11,8 @@ entity BlobDetection as bd
 entity ImageProcessor as img
 
 system -> application : run
+activate application
+
 'there are several system calls, e.g. to the camera, for printing data etc.
 note right of system : not all system calls are displayed for clarity`s sake
 
@@ -19,6 +21,7 @@ note right of system : not all system calls are displayed for clarity`s sake
 application -> vc : VideoCapture
 activate vc
 vc --> application : VideoCapture
+deactivate vc
 application -> pos : PositionFromCapture(capture)
 activate pos
 pos -> bg : BackgroundSubtractor(capture)
@@ -26,19 +29,27 @@ activate bg
 bg -> img : ImageProcessor
 activate img
 img --> bg : ImageProcessor
+deactivate img
 bg --> pos : BackgroundSubtractor
+deactivate bg
 pos -> bg : calibrate
+activate bg
 loop calibration
 note left of bg : calibration takes some time
 bg -> vc : getFrame
+activate vc
 vc --> bg : frame
+deactivate vc
 bg -> bg : update bgsubtractor
 end
 bg --> pos : true
+deactivate bg
 pos --> application : PositionFromCapture
+deactivate pos
 application -> print : Print
 activate print
 print --> application
+deactivate print
 
 
 
@@ -46,20 +57,32 @@ print --> application
 loop Retrieve positions and print them
 person -> application: moves
 application -> pos : getPositions
+activate pos
 pos -> bg : getForeground
-note left of bg : call videocapture somewhere here
-bg -> bg : retrieveFrame
+activate bg
+bg -> vc : getFrame
+activate vc
+vc --> bg : frame
+deactivate vc
 bg -> img : process(frame)
+activate img
 img --> bg : processedFrame
+deactivate img
 'FIXME syntax'
 bg --> pos : foreground image
+deactivate bg
 pos -> bd: detectBlobs(foreground_image)
+activate bd
 bd --> pos: array(detectedCoordinates)
+deactivate bd
 
 'FIXME syntax'
 pos --> application : array(x,y)
+deactivate pos
 application -> print : print(array(x,y))
+activate print
 print --> application
+deactivate print
 
 end
 
@@ -73,6 +96,7 @@ deactivate img
 deactivate print
 application -> application : terminate
 application --> system
+deactivate application
 
 
 @enduml
