@@ -45,7 +45,7 @@ ImageReaderStatus ImageReaderEncode::TryDecode(cv::Mat& output) {
           output = cv::Mat(cv::imdecode(data_mat,1));
           if (_print_flag) {
             std::vector<uchar> buffer;
-            cv::imencode("jpg", output, buffer);
+            cv::imencode(".jpg", output, buffer);
             for (auto it = buffer.begin(); it != buffer.end(); ++it)
             {
               std::cout << *it;
