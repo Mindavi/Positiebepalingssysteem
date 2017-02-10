@@ -7,8 +7,9 @@
 namespace imagereader {
 
 ImageReaderEncode::ImageReaderEncode(int print_flag)
- : ImageReader(print_flag)
-{}
+ : ImageReader(print_flag) {}
+
+ImageReaderEncode::~ImageReaderEncode() {}
 
 ImageReaderStatus ImageReaderEncode::TryDecode(cv::Mat& output) {
   ImageReaderStatus status = kNotDone;
