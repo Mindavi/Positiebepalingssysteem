@@ -11,6 +11,6 @@ while True:
     imgread, img = reader.decode()
     if imgread:
         cv2.imshow("frame", img)
-    key = cv2.waitKey(10) & 0xff
-    if key == escape_key:
-        break
+        key = cv2.waitKey(1) & 0xff
+        if key == escape_key:
+           break
