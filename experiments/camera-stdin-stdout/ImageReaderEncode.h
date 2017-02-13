@@ -10,6 +10,8 @@ public:
   ImageReaderEncode(int print_flag = false);
   virtual ~ImageReaderEncode();
   virtual ImageReaderStatus TryDecode(cv::Mat& output);
+private:
+  bool _print_flag = false;
 };
 
 } // namespace imagereader

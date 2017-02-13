@@ -11,7 +11,7 @@ public:
   ImageReader(int print_flag = false);
   virtual ~ImageReader();
   virtual ImageReaderStatus TryDecode(cv::Mat& output);
-protected:
+private:
   std::vector<char> _data;
   bool _skip = true;
   bool _imgready = false;
