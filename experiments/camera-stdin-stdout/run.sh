@@ -1,1 +1,1 @@
-./ffmpeg.sh | ./read-and-view-video.exe -v
+./ffmpeg.sh | ./read-and-view-video.exe --verbose
