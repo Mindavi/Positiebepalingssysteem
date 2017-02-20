@@ -6,13 +6,13 @@
 
 namespace imagereader {
 
-ImageReader::ImageReader(int print_flag)
-  : _print_flag(print_flag)
+ImageReader::ImageReader(bool print_flag, dlog::Log::Loglevel log_level)
+  : _print_flag(print_flag), _log(log_level)
 {}
 
 ImageReader::~ImageReader() {}
 
-ImageReaderStatus ImageReader::TryDecode(cv::Mat& output) {
+ImageReaderStatus ImageReader::TryDecode(cv::Mat& output_image) {
   ImageReaderStatus status = kNotDone;
   if (_readbytes != 0)
   {
@@ -45,8 +45,8 @@ ImageReaderStatus ImageReader::TryDecode(cv::Mat& output) {
         if (_data.size() != 0)
         {
           cv::Mat data_mat(_data);
-          output = cv::Mat(cv::imdecode(data_mat,1));
-          status = !output.empty() ? kImageRead : kEmptyInvalidFrame;
+          output_image = cv::Mat(cv::imdecode(data_mat,1));
+          status = !output_image.empty() ? kImageRead : kEmptyInvalidFrame;
         }
         else
         {
@@ -63,6 +63,32 @@ ImageReaderStatus ImageReader::TryDecode(cv::Mat& output) {
     status = kZeroByte;
   }
   return status;
+}
+
+void ImageReader::Decode(cv::Mat& output_image)
+{
+  while (1)
+  {
+    cv::Mat output_frame;
+    int status = TryDecode(output_frame);
+    switch (status) {
+      case imagereader::kImageRead:
+        // found an image, return to caller
+        output_image = output_frame;
+        return;
+      case imagereader::kNotDone:
+        /* wait till work is done */
+        break;
+      case imagereader::kZeroByte:
+        _log.log("Zero byte received, my work is done");
+        exit(EXIT_SUCCESS);
+        break;
+      default:
+        _log.log("An error occured, status code: " + std::to_string(status));
+        //exit(EXIT_FAILURE);
+        break;
+    }
+  }
 }
 
 

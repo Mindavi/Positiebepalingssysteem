@@ -66,27 +66,13 @@ using namespace cv;
 int main (int argc, char* argv[])
 {
   parse_options(argc, argv);
-  imagereader::ImageReader reader(print_flag);
+  dlog::Log::Loglevel log_level = verbose_flag ? dlog::Log::verbose : dlog::Log::none;
+  imagereader::ImageReader reader(print_flag, log_level);
   while (1)
   {
     cv::Mat output_frame;
-    int status = reader.TryDecode(output_frame);
-    switch (status) {
-      case imagereader::kImageRead:
-        // if (verbose_flag) std::clog << "image found!\n"; // too verbose?
-        cv::imshow("frame", output_frame);
-        cv::waitKey(1);
-        break;
-      case imagereader::kNotDone:
-        /* wait till work is done */
-        break;
-      case imagereader::kZeroByte:
-        if (verbose_flag) std::clog << "Zero byte received, my work is done.\n";
-        return EXIT_SUCCESS;
-        break;
-      default:
-        if (verbose_flag) std::clog << "An error occured, status code: " << status << '\n';
-        return EXIT_FAILURE;
-    }
+    reader.Decode(output_frame);
+    cv::imshow("frame", output_frame);
+    cv::waitKey(1);
   }
 }
