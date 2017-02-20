@@ -7,28 +7,28 @@
 #include "print_image.h"
 #include "Log.h"
 
-//set by --erode or -e
-int erosion_size = 0;
+// set by --dilate or -d
+int dilation_size = 0;
 
 //set by --verbose or -v
 int verbose_flag = 0;
 
 dlog::Log logger;
 
-void erode(cv::Mat& input_output)
+void dilate(cv::Mat& input_output)
 {
-  int erosion_type = cv::MORPH_RECT;
-  cv::Mat element = cv::getStructuringElement(erosion_type,
-    cv::Size(2*erosion_size, 2*erosion_size),
-    cv::Point(erosion_size, erosion_size));
-  cv::erode(input_output, input_output, element);
+  int dilation_type = cv::MORPH_RECT;
+  cv::Mat element = cv::getStructuringElement(dilation_type,
+    cv::Size(2*dilation_size, 2*dilation_size),
+    cv::Point(dilation_size, dilation_size));
+  cv::dilate(input_output, input_output, element);
 }
 
 static struct option options[]
 {
   {"verbose", no_argument, NULL, 'v'},
   {"help", no_argument, NULL, 'h'},
-  {"erode", required_argument, NULL, 'e'},
+  {"dilate", required_argument, NULL, 'd'},
   {0, 0, 0, 0}
 };
 
@@ -36,12 +36,12 @@ static struct option options[]
 static const std::string help_text = ""\
 " -h, --help\t\tview this message\n"\
 " -v, --verbose\t\tenable verbose mode\n"\
-" -e, --erode\tset erosion size, must be an integer > 0\n";
+" -d, --dilate\tset dilation size, must be an integer > 0\n";
 
 static void parse_options(int argc, char* argv[]) {
   while(1)
   {
-    int option = getopt_long(argc, argv, "vhe:", options, NULL);
+    int option = getopt_long(argc, argv, "vhd:", options, NULL);
     if (option == -1) break;
     switch(option)
     {
@@ -55,10 +55,10 @@ static void parse_options(int argc, char* argv[]) {
         std::clog << help_text;
         exit(EXIT_SUCCESS);
         break;
-      case 'e':
+      case 'd':
         if (optarg)
         {
-          erosion_size = std::atoi(optarg);
+          dilation_size = std::atoi(optarg);
         }
         break;
       case '?':
@@ -73,7 +73,8 @@ static void parse_options(int argc, char* argv[]) {
   dlog::Log::Loglevel log_level = verbose_flag ? dlog::Log::verbose : dlog::Log::none;
   logger = dlog::Log(log_level);
   logger.log("Verbose mode activated.");
-  logger.log("Erosion: " + std::to_string(erosion_size));
+  logger.log("Dilation: " + std::to_string(dilation_size));
+
 }
 
 
@@ -85,7 +86,7 @@ int main(int argc, char* argv[])
   while(1)
   {
     imagereader.Decode(source);
-    if (erosion_size > 0) erode(source);
+    if (dilation_size > 0) dilate(source);
     print_image::print_image(source);
   }
 }

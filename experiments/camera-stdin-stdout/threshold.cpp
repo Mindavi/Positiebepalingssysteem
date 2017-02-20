@@ -7,28 +7,26 @@
 #include "print_image.h"
 #include "Log.h"
 
-//set by --erode or -e
-int erosion_size = 0;
+// set by --threshold or -t
+int threshold_val = 0;
 
 //set by --verbose or -v
 int verbose_flag = 0;
 
 dlog::Log logger;
 
-void erode(cv::Mat& input_output)
+void threshold(cv::Mat& input_output)
 {
-  int erosion_type = cv::MORPH_RECT;
-  cv::Mat element = cv::getStructuringElement(erosion_type,
-    cv::Size(2*erosion_size, 2*erosion_size),
-    cv::Point(erosion_size, erosion_size));
-  cv::erode(input_output, input_output, element);
+  cv::Size size(2*threshold_val, 2*threshold_val);
+  const int threshold_type = 0; // 0 = binary mode
+  cv::threshold(input_output, input_output, threshold_val, 255, threshold_type);
 }
 
 static struct option options[]
 {
   {"verbose", no_argument, NULL, 'v'},
   {"help", no_argument, NULL, 'h'},
-  {"erode", required_argument, NULL, 'e'},
+  {"threshold", required_argument, NULL, 't'},
   {0, 0, 0, 0}
 };
 
@@ -36,12 +34,12 @@ static struct option options[]
 static const std::string help_text = ""\
 " -h, --help\t\tview this message\n"\
 " -v, --verbose\t\tenable verbose mode\n"\
-" -e, --erode\tset erosion size, must be an integer > 0\n";
+" -t, --threshold\tset threshold, must be an integer > 0 and < 256\n";
 
 static void parse_options(int argc, char* argv[]) {
   while(1)
   {
-    int option = getopt_long(argc, argv, "vhe:", options, NULL);
+    int option = getopt_long(argc, argv, "vht:", options, NULL);
     if (option == -1) break;
     switch(option)
     {
@@ -55,10 +53,10 @@ static void parse_options(int argc, char* argv[]) {
         std::clog << help_text;
         exit(EXIT_SUCCESS);
         break;
-      case 'e':
+      case 't':
         if (optarg)
         {
-          erosion_size = std::atoi(optarg);
+          threshold_val = std::atoi(optarg);
         }
         break;
       case '?':
@@ -73,7 +71,8 @@ static void parse_options(int argc, char* argv[]) {
   dlog::Log::Loglevel log_level = verbose_flag ? dlog::Log::verbose : dlog::Log::none;
   logger = dlog::Log(log_level);
   logger.log("Verbose mode activated.");
-  logger.log("Erosion: " + std::to_string(erosion_size));
+  logger.log("Threshold: " + std::to_string(threshold_val));
+
 }
 
 
@@ -85,7 +84,7 @@ int main(int argc, char* argv[])
   while(1)
   {
     imagereader.Decode(source);
-    if (erosion_size > 0) erode(source);
+    if (threshold_val > 0) threshold(source);
     print_image::print_image(source);
   }
 }
