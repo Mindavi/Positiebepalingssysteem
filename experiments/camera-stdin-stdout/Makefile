@@ -8,6 +8,7 @@ LDFLAGS_ER = -lopencv_core -lopencv_imgcodecs -lopencv_imgproc -I.
 LDFLAGS_DI = $(LDFLAGS_ER)
 LDFLAGS_BL = $(LDFLAGS_ER)
 LDFLAGS_TH = $(LDFLAGS_ER)
+LDFLAGS_BLOB = $(LDFLAGS_ER) -lopencv_features2d -I.
 
 SOURCES = Log.cpp read-video-stdin.cpp ImageReader.cpp print_image.cpp
 SOURCES_EDIT = Log.cpp read-edit.cpp ImageReaderEncode.cpp ImageReader.cpp print_image.cpp
@@ -17,6 +18,7 @@ SOURCES_ER = $(SOURCES_IMAGEPROC_COMMON) erode.cpp
 SOURCES_DI = $(SOURCES_IMAGEPROC_COMMON) dilate.cpp
 SOURCES_BL = $(SOURCES_IMAGEPROC_COMMON) blur.cpp
 SOURCES_TH = $(SOURCES_IMAGEPROC_COMMON) threshold.cpp
+SOURCES_BLOB = $(SOURCES_IMAGEPROC_COMMON) blobdetect.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 OBJECTS_EDIT = $(SOURCES_EDIT:.cpp=.o)
@@ -25,6 +27,7 @@ OBJECTS_ER = $(SOURCES_ER:.cpp=.o)
 OBJECTS_DI = $(SOURCES_DI:.cpp=.o)
 OBJECTS_BL = $(SOURCES_BL:.cpp=.o)
 OBJECTS_TH = $(SOURCES_TH:.cpp=.o)
+OBJECTS_BLOB = $(SOURCES_BLOB:.cpp=.o)
 
 BINARY = read-and-view-video.exe
 BINARY_EDIT = read-and-view-with-edit.exe
@@ -33,8 +36,9 @@ BINARY_ER = erode.exe
 BINARY_DI = dilate.exe
 BINARY_BL = blur.exe
 BINARY_TH = threshold.exe
+BINARY_BLOB = blob-detect.exe
 
-ALL_BINARIES = $(BINARY) $(BINARY_EDIT) $(BINARY_BG) $(BINARY_ER) $(BINARY_DI) $(BINARY_BL) $(BINARY_TH)
+ALL_BINARIES = $(BINARY) $(BINARY_EDIT) $(BINARY_BG) $(BINARY_ER) $(BINARY_DI) $(BINARY_BL) $(BINARY_TH) $(BINARY_BLOB)
 
 .PHONY: all clean dist-clean
 
@@ -60,6 +64,9 @@ $(BINARY_BL): $(OBJECTS_BL)
 
 $(BINARY_TH): $(OBJECTS_TH)
 	$(CXX) -o $@ $^ $(LDFLAGS_TH)
+
+$(BINARY_BLOB): $(OBJECTS_BLOB)
+	$(CXX) -o $@ $^ $(LDFLAGS_BLOB)
 
 .cpp.o:
 	$(CXX) -o $@ $< $(CXXFLAGS)
