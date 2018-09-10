@@ -1,6 +1,6 @@
 CXX = clang++
 CXXFLAGS = -Wall -Wextra -c
-LDFLAGS = -lopencv_core -lopencv_highgui -lopencv_videoio -lopencv_video -lopencv_imgproc -lopencv_features2d
+LDFLAGS = -lopencv_core -lopencv_highgui -lopencv_videoio -lopencv_video -lopencv_imgproc
 LDFLAGS_SHOW = -lopencv_core -lopencv_imgproc -lopencv_highgui
 SOURCES = combined.cpp
 SOURCES_SHOW = show.cpp
