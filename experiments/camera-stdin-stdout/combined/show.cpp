@@ -23,6 +23,9 @@ int main(void) {
             std::cout << "Invalid input:" << input << std::endl;
             continue;
         }
+        if (x < 0 || y < 0) {
+            continue;
+        }
         image = black;
         cv::circle(image, cv::Point(x, y), 20, white, -1);
         std::string window_name = "circle" + std::to_string(camera_number);

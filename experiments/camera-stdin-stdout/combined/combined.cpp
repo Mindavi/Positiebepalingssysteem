@@ -5,8 +5,6 @@
 #include <opencv2/features2d.hpp>  // for simpleblobdetector
 
 #include <iostream>
-#include <thread>
-
 
 const int bg_history = 500;
 const int threshold = 16;  // default value
@@ -81,7 +79,19 @@ void detectBlobs(const cv::Mat& image, int camera_number) {
     std::cout << camera_number << ":" << static_cast<int>(biggest.pt.x) << "," << static_cast<int>(biggest.pt.y) << std::endl;
 }
 
-void findContours(const cv::Mat& image) {
+cv::Point2f findContourMiddle(const std::vector<cv::Point>& contour) {
+    /// Get the moments
+    cv::Moments moments = cv::moments(contour, false);
+    if (moments.m00 == 0) {
+        return cv::Point2f(-1, -1);
+    }
+
+    ///  Get the mass centers:
+    cv::Point2f mc = cv::Point2f(moments.m10/moments.m00, moments.m01/moments.m00);
+    return mc;
+}
+
+void findContours(const cv::Mat& image, int camera_number) {
     cv::Mat canny_output;
     std::vector<std::vector<cv::Point> > contours;
     std::vector<cv::Vec4i> hierarchy;
@@ -93,6 +103,10 @@ void findContours(const cv::Mat& image) {
         cv::RETR_TREE,
         cv::CHAIN_APPROX_SIMPLE,
         cv::Point(0, 0));
+
+    if (contours.size() < 1) {
+        return;
+    }
 
     cv::Mat drawing = cv::Mat::zeros(image.size(), CV_8UC3);
     cv::Scalar color = cv::Scalar(255, 255, 255);
@@ -107,15 +121,20 @@ void findContours(const cv::Mat& image) {
         }
     }
 
-    cv::drawContours(drawing, contours, index, color, 2, 8, hierarchy, 0, cv::Point());
+    auto middle = findContourMiddle(contours[index]);
+    std::cout <<
+        camera_number << ":" <<
+        static_cast<int>(middle.x) << "," <<
+        static_cast<int>(middle.y) << std::endl;
+
+    // cv::drawContours(drawing, contours, index, color, 2, 8, hierarchy, 0, cv::Point());
 
     /// Show in a window
-   // namedWindow("Contours", cv::WINDOW_AUTOSIZE);
-   // imshow("Contours", drawing);
+    // show("contours", drawing);
 }
 
 
-int thread(int video_capture) {
+int thread(int camera_number) {
     cv::Mat background;  // background image
     cv::Ptr<cv::BackgroundSubtractor> pMOG2;  // MOG2 Background subtractor
     int blur_size = 10;
@@ -128,13 +147,13 @@ int thread(int video_capture) {
         threshold,
         detectShadows);
 
-    auto capture = cv::VideoCapture(video_capture);
-    // std::string control_window_name = "control" + std::to_string(video_capture);
-    // cv::namedWindow(control_window_name);
-    // cv::createTrackbar("blur", control_window_name, &blur_size, 20);
-    // cv::createTrackbar("erosion", control_window_name, &erosion_size, 20);
-    // cv::createTrackbar("dilation", control_window_name, &dilation_size, 20);
-    // cv::createTrackbar("learning rate", control_window_name, &learning_rate, learning_rate_divider);
+    auto capture = cv::VideoCapture(camera_number);
+    std::string control_window_name = "control" + std::to_string(camera_number);
+    cv::namedWindow(control_window_name);
+    cv::createTrackbar("blur", control_window_name, &blur_size, 20);
+    cv::createTrackbar("erosion", control_window_name, &erosion_size, 20);
+    cv::createTrackbar("dilation", control_window_name, &dilation_size, 20);
+    cv::createTrackbar("learning rate", control_window_name, &learning_rate, learning_rate_divider);
 
     cv::SimpleBlobDetector::Params params;
     params.filterByArea = true;
@@ -146,7 +165,7 @@ int thread(int video_capture) {
     params.maxArea = maximal_area;
     p_blob = cv::SimpleBlobDetector::create(params);
 
-    std::cerr << video_capture << " started\n";
+    std::cerr << camera_number << " started\n";
     while (1) {
         cv::Mat image;
         if (!capture.read(image) || image.empty()) {
@@ -157,21 +176,13 @@ int thread(int video_capture) {
         erode(&image, erosion_size);
         dilate(&image, dilation_size);
         subtract(pMOG2, &image, &background, learning_rate);
-        findContours(background);
-        detectBlobs(background, video_capture);
-        // show("transformed" + std::to_string(video_capture), background);
+        findContours(background, camera_number);
+        // detectBlobs(background, video_capture);
+        show("transformed" + std::to_string(camera_number), background);
     }
 }
 
 
 int main(void) {
-  std::array<std::thread, 4> threads;
-  for (size_t i = 0; i < threads.size(); i++) {
-    std::cerr << "Creating " << i << "\n";
-    threads[i] = std::thread(thread, i);
-  }
-  for (size_t i = threads.size() - 1; i >= 0; i--) {
-    threads[i].join();
-    std::cout << i << " joined\n";
-  }
+    thread(0);
 }
