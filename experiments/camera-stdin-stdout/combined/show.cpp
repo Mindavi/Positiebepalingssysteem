@@ -18,15 +18,18 @@ int main(void) {
         if (std::cin.eof()) {
             exit(0);
         }
-        int x, y;
-        if (sscanf(input.c_str(), "%d,%d", &x, &y) != 2) {
+        int camera_number, x, y;
+        if (sscanf(input.c_str(), "%d:%d,%d", &camera_number, &x, &y) != 3) {
+            std::cout << "Invalid input:" << input << std::endl;
             continue;
         }
-        std::cout << x << ":" << y << std::endl;
         image = black;
-        cv::circle(image, cv::Point(x, 240), 20, white, -1);
-        cv::imshow("circle", image);
-        char c = static_cast<char>(cv::waitKey(1));
+        cv::circle(image, cv::Point(x, y), 20, white, -1);
+        std::string window_name = "circle" + std::to_string(camera_number);
+        cv::putText(image, std::to_string(camera_number), cv::Point(30,30), 
+          cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(200,200,250), 1, cv::LINE_AA);
+        cv::imshow(window_name.c_str(), image);
+        char c = static_cast<char>(cv::waitKey(10));
         if (c == 27) exit(0);
     }
 }
