@@ -11,6 +11,7 @@ static int verbose_flag = 0;
 
 // set by --min_area or -a
 static int minimal_area = 50;
+static int maximal_area = 500;
 
 static dlog::Log logger;
 
@@ -90,6 +91,7 @@ int main(int argc, char* argv[])
   params.blobColor = 255;
   params.filterByConvexity = false;
   params.minArea = minimal_area;
+  params.maxArea = maximal_area;
   cv::Ptr<cv::SimpleBlobDetector> p_blob = cv::SimpleBlobDetector::create(params);
 
   while (true)
@@ -100,12 +102,9 @@ int main(int argc, char* argv[])
     std::vector<cv::KeyPoint> keypoints;
     p_blob->detect( frame, keypoints);
 
-    // Draw detected blobs as red circles.
-    // DrawMatchesFlags::DRAW_RICH_KEYPOINTS flag ensures the size of the circle corresponds to the size of blob
-    cv::Mat im_with_keypoints;
-    drawKeypoints( frame, keypoints, im_with_keypoints, cv::Scalar(0,0,255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-
-    print_image::print_image(im_with_keypoints);
+    for (const auto& keypoint : keypoints) {
+      printf("x:%f,y:%f\n", keypoint.pt.x, keypoint.pt.y);
+    }
   }
 
   return 0;
