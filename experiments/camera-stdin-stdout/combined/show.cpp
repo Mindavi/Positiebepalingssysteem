@@ -26,8 +26,8 @@ int main(void) {
         image = black;
         cv::circle(image, cv::Point(x, y), 20, white, -1);
         std::string window_name = "circle" + std::to_string(camera_number);
-        cv::putText(image, std::to_string(camera_number), cv::Point(30,30), 
-          cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(200,200,250), 1, cv::LINE_AA);
+        cv::putText(image, std::to_string(camera_number), cv::Point(30, 30),
+          cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(200, 200, 250));
         cv::imshow(window_name.c_str(), image);
         char c = static_cast<char>(cv::waitKey(10));
         if (c == 27) exit(0);
