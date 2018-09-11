@@ -223,6 +223,7 @@ void loop(cv::VideoCapture* capture) {
       exit(0);
       continue;
     }
+    show("original", image);
     blur(&image, blur_size);
     erode(&image, erosion_size);
     dilate(&image, dilation_size);
