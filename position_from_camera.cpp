@@ -12,11 +12,10 @@
 #define VERSION VERSION_STR(EXT_VER)
 #define VERSION_STR(X) _VERSION_STR(X)
 #define _VERSION_STR(X) #X
-#define DATETIME __DATE__ " " __TIME__
 
 const int escape_key = 27;
 
-const char* version = "Version (" VERSION ") Created on: " DATETIME;
+const char* version = "Version (" VERSION ")";
 
 const char* help_text =
     "\t-u <url>: read from url\n"
