@@ -30,11 +30,10 @@ int main(void) {
       continue;
     }
     image = black;
-    if (x < 0 || y < 0) {
-      continue;
+    if (x >= 0 && y >= 0) {
+      cv::circle(image, cv::Point(x, y), 20, white, -1);
     }
-    cv::circle(image, cv::Point(x, y), 20, white, -1);
-    std::string window_name = "circle";
+    std::string window_name = "plot";
     cv::putText(image, std::to_string(x) + ',' + std::to_string(y),
                 cv::Point(30, 30), cv::FONT_HERSHEY_SIMPLEX, 1,
                 cv::Scalar(200, 200, 250));
