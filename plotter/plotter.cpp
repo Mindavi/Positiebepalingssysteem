@@ -29,10 +29,10 @@ int main(void) {
       std::cout << "Invalid input:" << input << std::endl;
       continue;
     }
+    image = black;
     if (x < 0 || y < 0) {
       continue;
     }
-    image = black;
     cv::circle(image, cv::Point(x, y), 20, white, -1);
     std::string window_name = "circle";
     cv::putText(image, std::to_string(x) + ',' + std::to_string(y),
