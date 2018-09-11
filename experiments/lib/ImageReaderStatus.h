@@ -11,6 +11,6 @@ enum ImageReaderStatus {
   kWarning = -3
 };
 
-} // namespace imagereader
+}  // namespace imagereader
 
-#endif /* end of include guard: IMAGEREADER_CODE_H_ */
+#endif  // IMAGEREADER_CODE_H_

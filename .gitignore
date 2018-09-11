@@ -3,3 +3,4 @@ gen_version_id.py
 position_from_camera
 version_file.txt
 bin/
+.vscode

@@ -1,19 +1,21 @@
 #ifndef IMAGEREADER_H_
 #define IMAGEREADER_H_
 
+#include <opencv2/core/mat.hpp>
 #include "ImageReaderStatus.h"
 #include "Log.h"
-#include <opencv2/core/mat.hpp>
 
 namespace imagereader {
 
 class ImageReader {
-public:
-  ImageReader(bool print_flag = false, dlog::Log::Loglevel log_level = dlog::Log::none);
+ public:
+  ImageReader(bool print_flag = false,
+              dlog::Log::Loglevel log_level = dlog::Log::none);
   virtual ~ImageReader();
   virtual ImageReaderStatus TryDecode(cv::Mat& output_image);
   virtual void Decode(cv::Mat& output_image);
-private:
+
+ private:
   std::vector<char> _data;
   bool _skip = true;
   bool _imgready = false;
@@ -25,6 +27,6 @@ private:
   char _buffer[_buffer_size];
 };
 
-}
+}  // namespace imagereader
 
 #endif /* end of include guard: IMAGEREADER_H_ */
