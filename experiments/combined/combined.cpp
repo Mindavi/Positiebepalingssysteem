@@ -1,9 +1,8 @@
+#include <iostream>
 #include <opencv2/highgui.hpp>  // for imshow
 #include <opencv2/imgproc.hpp>  // for blur, dilation, erosion
 #include <opencv2/video.hpp>    // for backgroundsubtractor
 #include <opencv2/videoio.hpp>  // for videocapture
-
-#include <iostream>
 
 void show(std::string title, const cv::Mat& image) {
   cv::imshow(title.c_str(), image);
@@ -105,7 +104,7 @@ int thread(int camera_number) {
   int blur_size = 10;
   int erosion_size = 10;
   int dilation_size = 10;
-  int learning_rate = 0;
+  int learning_rate = 50;
 
   const int bg_history = 500;
   const int threshold = 16;          // default value
