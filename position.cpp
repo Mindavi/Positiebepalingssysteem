@@ -17,10 +17,9 @@
 #define _VERSION_STR(X) #X
 
 const int escape_key = 27;
-
 const char* version = "Version (" VERSION ")";
-
 const char* help_text =
+    "\t-a <minimal_area>: minimum detection area\n"
     "\t-u <url/file>: read from url or file\n"
     "\t-c <camera-id>: use camera_id\n"
     "\t-o: view camera output\n"
@@ -35,8 +34,26 @@ void termination_signal(int) { run = false; }
 
 void get_and_set_options(int argc, char* argv[]) {
   int c;
-  while ((c = getopt(argc, argv, "hu:c:ovV")) != -1) {
+  while ((c = getopt(argc, argv, "ha:u:c:ovV")) != -1) {
     switch (c) {
+      case 'a':
+        try {
+          options.minimal_area = std::stoi(optarg);
+        } catch (std::invalid_argument& e) {
+          std::cerr << "ERROR: invalid argument given: " << e.what()
+                    << std::endl;
+          exit(EXIT_FAILURE);
+        } catch (std::out_of_range& e) {
+          std::cerr << "ERROR: out of range argument given: " << e.what()
+                    << std::endl;
+          exit(EXIT_FAILURE);
+        }
+        if (options.minimal_area < 0) {
+          std::cerr << "Invalid minimum area given:" << options.minimal_area
+                    << std::endl;
+          exit(EXIT_FAILURE);
+        }
+        break;
       case 'u':
         options.use_url = true;
         options.url = optarg;
@@ -166,14 +183,25 @@ void findContours(const cv::Mat& image) {
 
   cv::Mat drawing = cv::Mat::zeros(image.size(), CV_8UC3);
 
-  int index = 0;
+  int index = -1;
   double biggest_area = 0.0;
   for (size_t i = 0; i < contours.size(); i++) {
     auto area = cv::contourArea(contours[i]);
+    auto within_minimal =
+        options.minimal_area == -1 || area >= options.minimal_area;
+    if (!within_minimal) {
+      continue;
+    }
+    log("Area " + std::to_string(static_cast<int>(area)));
     if (area > biggest_area) {
       index = i;
       biggest_area = area;
     }
+  }
+
+  if (index == -1) {
+    std::cout << -1 << "," << -1 << std::endl;
+    return;
   }
 
   auto middle = findContourMiddle(contours[index]);

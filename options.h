@@ -10,6 +10,7 @@ struct options {
   int camera_id = 0;
   bool view_camera = 0;
   bool verbose = 0;
+  int minimal_area = -1;
 };
 
 extern struct options options;
