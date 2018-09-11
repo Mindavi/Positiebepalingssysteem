@@ -16,3 +16,4 @@ set_target_properties (position_from_camera PROPERTIES
 
 add_subdirectory(position)
 add_subdirectory(plotter)
+add_subdirectory(stdin-stdout)
