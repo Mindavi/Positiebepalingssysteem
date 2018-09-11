@@ -16,20 +16,19 @@
 
 const int escape_key = 27;
 
-std::string version = "Version ("  VERSION  ") Created on: "  DATETIME; 
+const char* version = "Version ("  VERSION  ") Created on: "  DATETIME;
 
-std::string help_text = "\t-u <url>: read from url\n" \
-	"\t-c <camera-id>: use camera_id\n" \
-	"\t-o: view camera output\n" \
-	"\t-v: verbose mode\n" \
-	"\t-h: view this help text\n"
-	"\t-V: view version\n";
+const char* help_text = "\t-u <url>: read from url\n" \
+  "\t-c <camera-id>: use camera_id\n" \
+  "\t-o: view camera output\n" \
+  "\t-v: verbose mode\n" \
+  "\t-h: view this help text\n"
+  "\t-V: view version\n";
 
 struct options options;
 
 sig_atomic_t run = true;
-void termination_signal(int)
-{
+void termination_signal(int) {
   run = false;
 }
 

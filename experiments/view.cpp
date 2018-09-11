@@ -61,8 +61,8 @@ static void parse_options(int argc, char* argv[]) {
 }
 
 using namespace cv;
+const int escape_key = 27;
 
-#define BUFSIZE 10240
 int main (int argc, char* argv[])
 {
   parse_options(argc, argv);
@@ -73,6 +73,6 @@ int main (int argc, char* argv[])
     cv::Mat output_frame;
     reader.Decode(output_frame);
     cv::imshow("frame", output_frame);
-    cv::waitKey(1);
+    if (cv::waitKey(1) == escape_key) return 0;
   }
 }
