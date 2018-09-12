@@ -38,7 +38,7 @@ int main(void) {
                 cv::Point(30, 30), cv::FONT_HERSHEY_SIMPLEX, 1,
                 cv::Scalar(200, 200, 250));
     cv::imshow(window_name.c_str(), image);
-    char c = static_cast<char>(cv::waitKey(10));
+    char c = static_cast<char>(cv::waitKey(1));
     if (c == 27) exit(0);
   }
 }
