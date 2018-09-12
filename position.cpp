@@ -223,8 +223,8 @@ void loop(cv::VideoCapture* capture) {
   int learning_rate = 50;
 
   const int bg_history = 500;
-  const int threshold = 16;          // default value
-  const bool detectShadows = false;  // non-default
+  const int threshold = 16;
+  const bool detectShadows = true; 
 
   pMOG2 =
       cv::createBackgroundSubtractorMOG2(bg_history, threshold, detectShadows);
@@ -256,6 +256,7 @@ void loop(cv::VideoCapture* capture) {
     erode(&image, erosion_size);
     dilate(&image, dilation_size);
     subtract(pMOG2, &image, &background, learning_rate);
+    cv::threshold(background, background, 254, 255, cv::THRESH_BINARY);
     findContours(background);
     show("transformed", background);
   }
