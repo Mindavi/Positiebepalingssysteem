@@ -7,3 +7,5 @@ To build this project, you need to have OpenCV libraries installed on your compu
 ## Test library
 
 http://www.viratdata.org/ might be useful to use for checking if the algorithm works correctly.
+
+other source: http://imagelab.ing.unimore.it/visor/video_videosInCategory.asp?iStartFrom=0&idcategory=15
