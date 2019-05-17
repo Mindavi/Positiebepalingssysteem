@@ -3,6 +3,16 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
+std::vector<std::string> split(const std::string& input, char delimiter) {
+  std::stringstream ss(input);
+  std::string output;
+  std::vector<std::string> splitted;
+  while (std::getline(ss, output, delimiter)) {
+    splitted.push_back(output);
+  }
+  return splitted;
+}
+
 int main(void) {
   cv::Scalar black(0, 0, 0);
   cv::Scalar white(255, 255, 255);

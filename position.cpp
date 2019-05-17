@@ -183,8 +183,7 @@ void findContours(const cv::Mat& image) {
 
   cv::Mat drawing = cv::Mat::zeros(image.size(), CV_8UC3);
 
-  int index = -1;
-  double biggest_area = 0.0;
+  std::vector<std::vector<cv::Point> > big_enough_contours;
   for (size_t i = 0; i < contours.size(); i++) {
     auto area = cv::contourArea(contours[i]);
     auto within_minimal =
@@ -193,23 +192,22 @@ void findContours(const cv::Mat& image) {
       continue;
     }
     log("Area " + std::to_string(static_cast<int>(area)));
-    if (area > biggest_area) {
-      index = i;
-      biggest_area = area;
-    }
+    big_enough_contours.push_back(contours[i]);
   }
 
-  if (index == -1) {
+  if (big_enough_contours.size() <= 0) {
     std::cout << -1 << "," << -1 << std::endl;
     return;
   }
 
-  auto middle = findContourMiddle(contours[index]);
-  std::cout << static_cast<int>(middle.x) << "," << static_cast<int>(middle.y)
-            << std::endl;
+  for (const auto& contour : big_enough_contours) {
+    auto middle = findContourMiddle(contour);
+    std::cout << static_cast<int>(middle.x) << "," << static_cast<int>(middle.y)
+              << std::endl;
+  }
 
   cv::Scalar color = cv::Scalar(255, 255, 255);
-  cv::drawContours(drawing, contours, index, color, 2, 8, hierarchy, 0,
+  cv::drawContours(drawing, big_enough_contours, -1, color, 2, 8, hierarchy, 0,
                    cv::Point());
   show("contours", drawing);
 }
@@ -224,7 +222,7 @@ void loop(cv::VideoCapture* capture) {
 
   const int bg_history = 500;
   const int threshold = 16;
-  const bool detectShadows = true; 
+  const bool detectShadows = true;
 
   pMOG2 =
       cv::createBackgroundSubtractorMOG2(bg_history, threshold, detectShadows);
